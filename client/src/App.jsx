@@ -2,6 +2,8 @@ import './style.css';
 import Todo from './Todo.jsx';
 import { useEffect, useState } from 'react';
 
+const API_BASE = "https://todo-app-hqot.onrender.com/api/todos";
+
 export default function App() {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,10 +15,11 @@ export default function App() {
     // eslint-disable-next-line
   }, []);
 
+  // Fetch all todos
   const fetchTodos = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/todos');
+      const res = await fetch(API_BASE);
       const todos = await res.json();
       setTodos(todos);
     } catch (error) {
@@ -26,12 +29,13 @@ export default function App() {
     setLoading(false);
   };
 
+  // Create new todo
   const createNewTodo = async (e) => {
     e.preventDefault();
     if (!content.trim()) return;
 
     try {
-      const res = await fetch('/api/todos', {
+      const res = await fetch(API_BASE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ todo: content }),
@@ -46,10 +50,10 @@ export default function App() {
     }
   };
 
-  // Toggle status of a single todo
+  // Toggle status
   const toggleTodoStatus = async (id, currentStatus) => {
     try {
-      const res = await fetch(`/api/todos/${id}`, {
+      const res = await fetch(`${API_BASE}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: !currentStatus }),
@@ -61,10 +65,10 @@ export default function App() {
     }
   };
 
-  // Delete a todo
+  // Delete todo
   const deleteTodo = async (id) => {
     try {
-      const res = await fetch(`/api/todos/${id}`, {
+      const res = await fetch(`${API_BASE}/${id}`, {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error('Network response was not ok');
@@ -74,9 +78,10 @@ export default function App() {
     }
   };
 
+  // Update todo text
   const updateTodoText = async (id, newText) => {
     try {
-      const res = await fetch(`/api/todos/${id}`, {
+      const res = await fetch(`${API_BASE}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ todo: newText }),
